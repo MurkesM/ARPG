@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,6 +10,11 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 targetPosition;
     private bool isMoving = false;
+
+    [SerializeField] private Animator playerAnimator;
+    private const string moveParam = "IsMoving";
+
+    public event Action<Vector3> OnMoved;
 
     private void Update()
     {
@@ -39,10 +45,14 @@ public class PlayerController : MonoBehaviour
     {
         isMoving = true;
 
+        playerAnimator.SetBool(moveParam, isMoving);
+
         while (Vector3.Distance(transform.position, targetPosition) > moveToThreshhold)
         {
             Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
             transform.position = new Vector3 (newPosition.x, transform.position.y, newPosition.z);
+
+            OnMoved?.Invoke(transform.position);
 
             Vector3 direction = (targetPosition - transform.position).normalized;
 
@@ -57,5 +67,7 @@ public class PlayerController : MonoBehaviour
 
         transform.position = targetPosition;
         isMoving = false;
+
+        playerAnimator.SetBool(moveParam, isMoving);
     }
 }
