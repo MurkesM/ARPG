@@ -36,33 +36,7 @@ public class PlayerController : NetworkBehaviour
             if (isAttacking)
                 return;
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            int floorLayerMask = LayerMask.GetMask("Floor");
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, floorLayerMask))
-            {
-                Vector3 clickedPosition = hit.point;
-
-                // Only change the target position if it's different
-                if (targetPosition != clickedPosition)
-                {
-                    targetPosition = clickedPosition;
-
-                    if (!isMoving)
-                    {
-                        if (IsServer)
-                        {
-                            moveRoutine = StartCoroutine(MoveToTarget());
-                        }
-                        else if (IsClient)
-                        {
-                            MoveServerRPC(targetPosition);
-                        }
-                    }
-                }
-            }
+            TryMove();
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -118,9 +92,46 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void MoveServerRPC(Vector3 targetPosition)
+    private void MoveServerRpc(Vector3 positionToMove)
     {
-        this.targetPosition = targetPosition;
+        targetPosition = positionToMove;
+        Move();
+    }
+
+    private void TryMove()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        int floorLayerMask = LayerMask.GetMask("Floor");
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, floorLayerMask))
+        {
+            Vector3 clickedPosition = hit.point;
+
+            // Only change the target position if it's different
+            if (targetPosition != clickedPosition)
+            {
+                targetPosition = clickedPosition;
+
+                if (IsServer)
+                {
+                    Move();
+                }
+                else if (IsClient)
+                {
+                    MoveServerRpc(targetPosition);
+                }
+            }
+        }
+    }
+
+    private void Move()
+    {
+        //do we need to be checking if is moving?
+        if (isMoving && moveRoutine != null)
+            StopCoroutine(moveRoutine);
+
         moveRoutine = StartCoroutine(MoveToTarget());
     }
 

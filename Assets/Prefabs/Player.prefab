@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2249651707222560827}
   - component: {fileID: 5688859157476776993}
   - component: {fileID: -5681667502225632549}
+  - component: {fileID: 4761102509731186385}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -57,7 +58,6 @@ MonoBehaviour:
   damageToDeal: 10
   playerAnimator: {fileID: 4061366932785210831}
   attributeComponent: {fileID: 3117240523567705894}
-  networkTransform: {fileID: -5681667502225632549}
 --- !u!95 &4061366932785210831
 Animator:
   serializedVersion: 5
@@ -193,6 +193,34 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &4761102509731186385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2197823882361247441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 1876904103
+    TransitionDuration: 0.25
+    TriggerNameHash: 1743692075
+    TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -2086507823
+    DestinationState: 1876904103
+    TransitionDuration: 0.25
+    TriggerNameHash: 1743692075
+    TransitionIndex: 1
+  m_Animator: {fileID: 4061366932785210831}
 --- !u!1001 &4231267267871710277
 PrefabInstance:
   m_ObjectHideFlags: 0
