@@ -10,9 +10,13 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 targetPosition;
     private bool isMoving = false;
+    private bool isAttacking = false;
 
     [SerializeField] private Animator playerAnimator;
     private const string moveParam = "IsMoving";
+    private const string primaryAttackParam = "IsPrimaryAttacking";
+
+    private Coroutine moveRoutine = null;
 
     public event Action<Vector3> OnMoved;
 
@@ -20,6 +24,9 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
+            if (isAttacking)
+                return;
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -35,9 +42,14 @@ public class PlayerController : MonoBehaviour
                     targetPosition = clickedPosition;
 
                     if (!isMoving)
-                        StartCoroutine(MoveToTarget());
+                        moveRoutine = StartCoroutine(MoveToTarget());
                 }
             }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            PrimaryAttack();
         }
     }
 
@@ -49,6 +61,13 @@ public class PlayerController : MonoBehaviour
 
         while (Vector3.Distance(transform.position, targetPosition) > moveToThreshhold)
         {
+            if (isAttacking)
+            {
+                isMoving = false;
+                playerAnimator.SetBool(moveParam, isMoving);
+                StopCoroutine(moveRoutine);
+            }
+
             Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
             transform.position = new Vector3 (newPosition.x, transform.position.y, newPosition.z);
 
@@ -69,5 +88,20 @@ public class PlayerController : MonoBehaviour
         isMoving = false;
 
         playerAnimator.SetBool(moveParam, isMoving);
+    }
+
+    private void PrimaryAttack()
+    {
+        if (isAttacking)
+            return;
+
+        isAttacking = true;
+
+        playerAnimator.SetTrigger(primaryAttackParam);
+    }
+
+    public void OnPrimaryAttackAnimEnd()
+    {
+        isAttacking = false;
     }
 }

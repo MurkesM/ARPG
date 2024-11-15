@@ -401,10 +401,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 347095190941932265, guid: 88e4ba2c252135243a82255c9cab49ff, type: 3}
-      propertyPath: playerAnimator
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2197823882361247441, guid: 88e4ba2c252135243a82255c9cab49ff, type: 3}
       propertyPath: m_Name
       value: Player
@@ -450,9 +446,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 2458262492920020034, guid: 88e4ba2c252135243a82255c9cab49ff, type: 3}
-    - {fileID: -3000735526577358006, guid: 88e4ba2c252135243a82255c9cab49ff, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88e4ba2c252135243a82255c9cab49ff, type: 3}
