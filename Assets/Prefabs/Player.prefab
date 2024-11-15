@@ -53,8 +53,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  rotationSpeed: 1800
   moveToThreshhold: 0.1
+  rotationSpeed: 1800
   attributeComponent: {fileID: 3117240523567705894}
   damageToDeal: 10
   playerAnimator: {fileID: 4061366932785210831}
@@ -106,7 +106,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0

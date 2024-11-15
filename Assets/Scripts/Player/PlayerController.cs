@@ -40,7 +40,12 @@ public class PlayerController : NetworkBehaviour
         }
 
         if (Input.GetMouseButtonDown(0))
-            PrimaryAttack();
+        {
+            if (isAttacking)
+                return;
+
+            TryPrimaryAttack();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -142,6 +147,15 @@ public class PlayerController : NetworkBehaviour
 
     #region Attack Functions
 
+    private void TryPrimaryAttack()
+    {
+        if (IsServer)
+            PrimaryAttack();
+
+        else if (IsClient)
+            PrimaryAttackServerRpc();
+    }
+
     private void PrimaryAttack()
     {
         if (isAttacking)
@@ -152,6 +166,12 @@ public class PlayerController : NetworkBehaviour
         isAttacking = true;
 
         playerAnimator.SetTrigger(primaryAttackParam);
+    }
+
+    [ServerRpc]
+    private void PrimaryAttackServerRpc()
+    {
+        PrimaryAttack();
     }
 
     /// <summary>
