@@ -1,15 +1,16 @@
 using System;
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 700f;
     [SerializeField] private float moveToThreshhold = 0.1f;
     [SerializeField] private int damageToDeal = 10;
 
-    private Vector3 targetPosition;
+    private Vector3 targetPosition = new();
     private bool isMoving = false;
     private bool isAttacking = false;
 
@@ -27,6 +28,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner)
+            return;
+
         if (Input.GetMouseButtonDown(1))
         {
             if (isAttacking)
@@ -47,7 +51,16 @@ public class PlayerController : MonoBehaviour
                     targetPosition = clickedPosition;
 
                     if (!isMoving)
-                        moveRoutine = StartCoroutine(MoveToTarget());
+                    {
+                        if (IsServer)
+                        {
+                            moveRoutine = StartCoroutine(MoveToTarget());
+                        }
+                        else if (IsClient)
+                        {
+                            MoveServerRPC(targetPosition);
+                        }
+                    }
                 }
             }
         }
@@ -74,6 +87,7 @@ public class PlayerController : MonoBehaviour
 
         while (Vector3.Distance(transform.position, targetPosition) > moveToThreshhold)
         {
+            //stop move early
             if (isAttacking)
             {
                 isMoving = false;
@@ -82,6 +96,7 @@ public class PlayerController : MonoBehaviour
             }
 
             Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+
             transform.position = new Vector3 (newPosition.x, transform.position.y, newPosition.z);
 
             OnMoved?.Invoke(transform.position);
@@ -94,18 +109,24 @@ public class PlayerController : MonoBehaviour
                 Vector3 targetRotateAsEulerAngle = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime).eulerAngles;
                 transform.eulerAngles = new Vector3(transform.rotation.x, targetRotateAsEulerAngle.y, transform.rotation.z);
             }
+
             yield return null;
         }
 
-        transform.position = targetPosition;
         isMoving = false;
-
         playerAnimator.SetBool(moveParam, isMoving);
+    }
+
+    [ServerRpc]
+    private void MoveServerRPC(Vector3 targetPosition)
+    {
+        this.targetPosition = targetPosition;
+        moveRoutine = StartCoroutine(MoveToTarget());
     }
 
     private void PrimaryAttack()
     {
-        if (isAttacking)
+        if (!IsOwner || isAttacking)
             return;
 
         isAttacking = true;
@@ -113,6 +134,9 @@ public class PlayerController : MonoBehaviour
         playerAnimator.SetTrigger(primaryAttackParam);
     }
 
+    /// <summary>
+    /// This is connected to the anim event for the basic attack animation.
+    /// </summary>
     public void OnPrimaryAttackAnimEnd()
     {
         isAttacking = false;
