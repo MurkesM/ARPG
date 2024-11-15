@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 700f;
     [SerializeField] private float moveToThreshhold = 0.1f;
+    [SerializeField] private int damageToDeal = 10;
 
     private Vector3 targetPosition;
     private bool isMoving = false;
@@ -16,7 +17,11 @@ public class PlayerController : MonoBehaviour
     private const string moveParam = "IsMoving";
     private const string primaryAttackParam = "IsPrimaryAttacking";
 
+    private const string damageableTag = "Damageable";
+
     private Coroutine moveRoutine = null;
+
+    [SerializeField] private AttributeComponent attributeComponent;
 
     public event Action<Vector3> OnMoved;
 
@@ -51,6 +56,14 @@ public class PlayerController : MonoBehaviour
         {
             PrimaryAttack();
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag(damageableTag) || !other.TryGetComponent(out AttributeComponent attributeComponent) || !isAttacking)
+            return;
+
+        attributeComponent.ApplyHealthChange(-damageToDeal);
     }
 
     private IEnumerator MoveToTarget()
