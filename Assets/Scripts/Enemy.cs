@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : NetworkBehaviour
 {
     [SerializeField] private AttributeComponent attributeComponent;
 }

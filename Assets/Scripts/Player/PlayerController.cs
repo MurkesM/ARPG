@@ -25,6 +25,21 @@ public class PlayerController : NetworkBehaviour
     private const string moveParam = "IsMoving";
     private const string primaryAttackParam = "IsPrimaryAttacking";
 
+    [Header("Debug Fields")]
+    [SerializeField] private MeshRenderer debugMarkerMeshRenderer;
+
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+            return;
+
+        if (IsServer)
+            debugMarkerMeshRenderer.material.color = Color.green;
+
+        else if (IsClient)
+            debugMarkerMeshRenderer.material.color = Color.blue;
+    }
+
     private void Update()
     {
         //ignore input if this client is not the owner of this networkbehavior
@@ -54,7 +69,7 @@ public class PlayerController : NetworkBehaviour
         if (!other.CompareTag(damageableTag) || !other.TryGetComponent(out AttributeComponent attributeComponent) || !isAttacking)
             return;
 
-        attributeComponent.ApplyHealthChange(-damageToDeal);
+        attributeComponent.TryApplyHealthChange(-damageToDeal);
     }
 
     #region Movement Functions
@@ -76,7 +91,7 @@ public class PlayerController : NetworkBehaviour
                 targetPosition = clickedPosition;
 
                 if (IsServer)
-                    Move();
+                    MoveClientRpc(targetPosition);
 
                 else if (IsClient)
                     MoveServerRpc(targetPosition);
@@ -86,6 +101,12 @@ public class PlayerController : NetworkBehaviour
 
     [ServerRpc]
     private void MoveServerRpc(Vector3 positionToMove)
+    {
+        MoveClientRpc(positionToMove);
+    }
+
+    [ClientRpc]
+    private void MoveClientRpc(Vector3 positionToMove)
     {
         targetPosition = positionToMove;
         Move();
@@ -150,10 +171,22 @@ public class PlayerController : NetworkBehaviour
     private void TryPrimaryAttack()
     {
         if (IsServer)
-            PrimaryAttack();
+            PrimaryAttackClientRpc();
 
         else if (IsClient)
             PrimaryAttackServerRpc();
+    }
+
+    [ServerRpc]
+    private void PrimaryAttackServerRpc()
+    {
+        PrimaryAttackClientRpc();
+    }
+
+    [ClientRpc]
+    private void PrimaryAttackClientRpc()
+    {
+        PrimaryAttack();
     }
 
     private void PrimaryAttack()
@@ -165,13 +198,9 @@ public class PlayerController : NetworkBehaviour
 
         isAttacking = true;
 
-        playerAnimator.SetTrigger(primaryAttackParam);
-    }
+        //print(OwnerClientId + " " + "Attacking");
 
-    [ServerRpc]
-    private void PrimaryAttackServerRpc()
-    {
-        PrimaryAttack();
+        playerAnimator.SetTrigger(primaryAttackParam);
     }
 
     /// <summary>
