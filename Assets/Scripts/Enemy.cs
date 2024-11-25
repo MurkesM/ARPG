@@ -7,32 +7,45 @@ public class Enemy : NetworkBehaviour
 
     [SerializeField] private float radius = 10f;
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float stoppingDistance = 2f; //distance to stop from the player
+    [SerializeField] private float stoppingDistance = 2f;
     public float rotationSpeed = 5f;
+    public float cooldownTime = 1f;
+
+    private GameObject closestPlayer;
+    private Vector3 lastKnownPlayerPosition;
+    private float lastUpdateTime;
 
     private void Update()
     {
-        GameObject closestPlayer = FindClosestPlayer();
-
-        if (closestPlayer != null)
+        // Update the closest player only if the cooldown period has elapsed
+        if (Time.time >= lastUpdateTime + cooldownTime)
         {
-            float distanceToPlayer = Vector3.Distance(transform.position, closestPlayer.transform.position);
+            closestPlayer = FindClosestPlayer();
+            lastUpdateTime = Time.time; // Reset the cooldown timer
 
-            // Calculate the direction towards the player
-            Vector3 direction = closestPlayer.transform.position - transform.position;
-            direction.y = 0; // Keep Y axis unchanged for horizontal rotation
-
-            // Only rotate if the direction is not zero
-            if (direction != Vector3.zero)
+            // Update last known position if a player is found
+            if (closestPlayer != null)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                lastKnownPlayerPosition = closestPlayer.transform.position;
             }
-
-            // Move towards the player only if we're further than the stopping distance
-            if (distanceToPlayer > stoppingDistance)
-                transform.position = Vector3.MoveTowards(transform.position, closestPlayer.transform.position, moveSpeed * Time.deltaTime);
         }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, lastKnownPlayerPosition);
+
+        // Calculate the direction towards the player
+        Vector3 direction = lastKnownPlayerPosition - transform.position;
+        direction.y = 0; // Keep Y axis unchanged for horizontal rotation
+
+        // Only rotate if the direction is not zero
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+
+        // Move towards the player only if we're further than the stopping distance
+        if (distanceToPlayer > stoppingDistance)
+            transform.position = Vector3.MoveTowards(transform.position, lastKnownPlayerPosition, moveSpeed * Time.deltaTime);
     }
 
     private GameObject FindClosestPlayer()
