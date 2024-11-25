@@ -359,6 +359,10 @@ PrefabInstance:
       value: Console_ScrollView
       objectReference: {fileID: 0}
     - target: {fileID: 114070892711038982, guid: 55abec7d6832f46fea72ac38ef269343, type: 3}
+      propertyPath: m_Color.a
+      value: 0.6392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114070892711038982, guid: 55abec7d6832f46fea72ac38ef269343, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}

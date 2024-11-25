@@ -198,8 +198,6 @@ public class PlayerController : NetworkBehaviour
 
         isAttacking = true;
 
-        //print(OwnerClientId + " " + "Attacking");
-
         playerAnimator.SetTrigger(primaryAttackParam);
     }
 
