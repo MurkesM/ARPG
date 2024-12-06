@@ -9,7 +9,13 @@ public class AttributeComponent : NetworkBehaviour
     public void TryApplyHealthChange(int delta)
     {
         if (IsServer)
-            ApplyHealthChangeClientRpc(delta);
+            ApplyHealthChangeServerRpc(delta);
+    }
+
+    [ServerRpc]
+    private void ApplyHealthChangeServerRpc(int delta)
+    {
+        ApplyHealthChangeClientRpc(delta);
     }
 
     [ClientRpc]

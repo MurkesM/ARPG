@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 5688859157476776993}
   - component: {fileID: -5681667502225632549}
   - component: {fileID: 4761102509731186385}
+  - component: {fileID: 6774120947999937525}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -58,6 +59,7 @@ MonoBehaviour:
   rotationSpeed: 1800
   attributeComponent: {fileID: 3117240523567705894}
   damageToDeal: 10
+  combatController: {fileID: 6774120947999937525}
   playerAnimator: {fileID: 4061366932785210831}
   debugMarkerMeshRenderer: {fileID: 1908605667036552328}
 --- !u!95 &4061366932785210831
@@ -223,6 +225,18 @@ MonoBehaviour:
     TriggerNameHash: 1743692075
     TransitionIndex: 1
   m_Animator: {fileID: 4061366932785210831}
+--- !u!114 &6774120947999937525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2197823882361247441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d31233417b7f50419bdec8776b8906d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1362328151223427337
 PrefabInstance:
   m_ObjectHideFlags: 0
