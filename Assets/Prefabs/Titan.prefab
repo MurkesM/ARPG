@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8761312718662116143}
   - component: {fileID: 1335888468898375229}
   - component: {fileID: 4301747858281388608}
+  - component: {fileID: 1065376392468245052}
   m_Layer: 0
   m_Name: Titan
   m_TagString: Damageable
@@ -74,11 +75,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attributeComponent: {fileID: 8761312718662116143}
-  radius: 10
+  combatController: {fileID: 1065376392468245052}
   moveSpeed: 2
   stoppingDistance: 2
   rotationSpeed: 5
-  cooldownTime: 2
+  animator: {fileID: 5611975497586246047}
 --- !u!114 &-3758874783044247149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +158,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 5
   m_Center: {x: 0, y: 1.23, z: 0}
+--- !u!114 &1065376392468245052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77776957332272983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d31233417b7f50419bdec8776b8906d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &353150972713484404
 GameObject:
   m_ObjectHideFlags: 0

@@ -176,6 +176,8 @@ public class PlayerController : NetworkBehaviour
         //keeping here for future
     }
 
+    #endregion
+
     public override void OnDestroy()
     {
         base.OnDestroy();
@@ -183,6 +185,4 @@ public class PlayerController : NetworkBehaviour
         combatController.OnPrimaryAttackCalled -= OnPrimaryAttackCalled;
         combatController.OnPrimaryAttackEnd -= OnPrimaryAttackEnd;
     }
-
-    #endregion
 }
