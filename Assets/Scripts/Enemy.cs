@@ -15,8 +15,9 @@ public class Enemy : NetworkBehaviour
     [SerializeField] private float rotationSpeed = 5f;
 
     protected const string PlayerTag = "Player";
-    private PlayerController targetPlayer;
+    protected PlayerController targetPlayer;
     protected List<PlayerController> targetPlayers = new List<PlayerController>();
+    protected float distanceToPlayer = 0;
 
     [Header("Animation Fields")]
     [SerializeField] private Animator animator;
@@ -33,6 +34,8 @@ public class Enemy : NetworkBehaviour
 
     private void Update()
     {
+        UpdateDistanceToPlayer();
+        CheckIfInAttackRange();
         MoveAndRotateTowardsTargetPlayer();
 
         if (inAttackRange)
@@ -50,32 +53,22 @@ public class Enemy : NetworkBehaviour
     {
         //remove players from list
         if (other.CompareTag(PlayerTag) && other.TryGetComponent(out PlayerController playerController) && targetPlayers.Contains(playerController))
+        {
             targetPlayers.Remove(playerController);
+
+            if (isMoving)
+                StopMove();
+        }
     }
 
     protected virtual void MoveAndRotateTowardsTargetPlayer()
     {
-        if (targetPlayers.Count < 1)
+        if (inAttackRange || combatController.IsAttacking || targetPlayers.Count < 1)
             return;
 
-        //always target the first player to get added to the list, which should be the first player to enter the range of this enemy
-        targetPlayer = targetPlayers[0];
+        transform.position = Vector3.MoveTowards(transform.position, targetPlayer.transform.position, moveSpeed * Time.deltaTime);
+        isMoving = true;
 
-        //move towards the player only if we're further than the stopping distance
-        float distanceToPlayer = Vector3.Distance(transform.position, targetPlayer.transform.position);
-
-        if (distanceToPlayer > stoppingDistance)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetPlayer.transform.position, moveSpeed * Time.deltaTime);
-            isMoving = true;
-            inAttackRange = false;
-        }
-        else
-        {
-            isMoving = false;
-            inAttackRange = true;
-        }
-            
         //rotate
         Vector3 direction = targetPlayer.transform.position - transform.position;
         direction.y = 0;
@@ -87,10 +80,37 @@ public class Enemy : NetworkBehaviour
         }
     }
 
+    protected virtual void StopMove()
+    {
+        if (!isMoving)
+            return;
+
+        isMoving = false;
+        animator.SetBool(moveParam, isMoving);
+    }
+
+    private void UpdateDistanceToPlayer()
+    {
+        if (targetPlayers.Count < 1)
+            return;
+
+        //always target the first player to get added to the list, which should be the first player to enter the range of this enemy
+        targetPlayer = targetPlayers[0];
+
+        distanceToPlayer = Vector3.Distance(transform.position, targetPlayer.transform.position);
+    }
+
+    private void CheckIfInAttackRange()
+    {
+        inAttackRange = distanceToPlayer <= stoppingDistance;
+    }
+
     private void TryPrimaryAttack()
     {
         if (combatController.IsAttacking)
             return;
+
+        StopMove();
 
         combatController.PrimaryAttack();
     }
