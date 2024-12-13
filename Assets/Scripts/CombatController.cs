@@ -4,22 +4,24 @@ using UnityEngine;
 
 public class CombatController : MonoBehaviour
 {
+    //enums
+    public enum AttackType { PrimaryAttack }
+
     public enum AllowedTargets { Player, Enemy, Both}
     [SerializeField] private AllowedTargets allowedTargets = AllowedTargets.Player;
-
-    public enum AttackType { PrimaryAttack }
 
     //States
     public bool IsAttacking { get => isAttacking; }
     private bool isAttacking = false;
 
+    //general
     [SerializeField] private int damageToDeal = 10;
+    private List<AttackData> attackDataList = new List<AttackData>();
 
     [Header("Collidor Event Handlers")]
     [SerializeField] private ColliderEventHandler rightHandColliderHandler;
 
-    private List<AttackData> attackDataList = new List<AttackData>();
-
+    //events
     public event Action OnPrimaryAttackCalled;
     public event Action OnPrimaryAttackEnd;
 

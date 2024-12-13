@@ -25,7 +25,6 @@ public class PlayerController : NetworkBehaviour
     [Header("Debug Fields")]
     [SerializeField] private MeshRenderer debugMarkerMeshRenderer;
 
-
     protected virtual void Awake()
     {
         combatController.OnPrimaryAttackCalled += OnPrimaryAttackCalled;

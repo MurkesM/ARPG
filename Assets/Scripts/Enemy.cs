@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class Enemy : NetworkBehaviour
 {
-    public AttributeComponent AttributeComponent { get => attributeComponent; }
-    [SerializeField] private AttributeComponent attributeComponent;
-
-    [SerializeField] private CombatController combatController;
-
-    private bool inAttackRange = false;
-    private bool isMoving = false;
-
+    [Header("General Fields")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float stoppingDistance = 2f;
     [SerializeField] private float rotationSpeed = 5f;
+    private bool isMoving = false;
 
+    public AttributeComponent AttributeComponent { get => attributeComponent; }
+    [SerializeField] private AttributeComponent attributeComponent;
+
+    [Header("Combat Fields")]
+    [SerializeField] private CombatController combatController;
+    private bool inAttackRange = false;
+
+    //player related fields
     protected PlayerController targetPlayer;
     protected List<PlayerController> targetPlayers = new List<PlayerController>();
     protected float distanceToPlayer = 0;
