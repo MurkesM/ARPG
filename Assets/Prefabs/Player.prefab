@@ -55,10 +55,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  moveToThreshhold: 0.1
   rotationSpeed: 1800
   attributeComponent: {fileID: 3117240523567705894}
-  damageToDeal: 10
   combatController: {fileID: 6774120947999937525}
   playerAnimator: {fileID: 4061366932785210831}
   debugMarkerMeshRenderer: {fileID: 1908605667036552328}
@@ -237,6 +235,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d31233417b7f50419bdec8776b8906d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedTargets: 1
+  damageToDeal: 10
+  rightHandColliderHandler: {fileID: 8046876475571543329}
 --- !u!1001 &1362328151223427337
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -757,6 +758,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afbecd5bd7bdf5645939b6778b81260a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2614992245874987188}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afbecd5bd7bdf5645939b6778b81260a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8046876475571543329}
   m_SourcePrefab: {fileID: 100100000, guid: afbecd5bd7bdf5645939b6778b81260a, type: 3}
 --- !u!1 &4629150977437055174 stripped
 GameObject:
@@ -786,6 +790,18 @@ CapsuleCollider:
   m_Height: 0.8623659
   m_Direction: 1
   m_Center: {x: -0.00018528964, y: 0.4315592, z: 0.00015420985}
+--- !u!114 &8046876475571543329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4629150977437055174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62854ffb782e64e43bacf3ffde4f7f48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &5437495002290315900 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: afbecd5bd7bdf5645939b6778b81260a, type: 3}

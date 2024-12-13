@@ -14,9 +14,6 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private AttributeComponent attributeComponent;
     public AttributeComponent AttributeComponent { get => attributeComponent; }
 
-    [SerializeField] private int damageToDeal = 10;
-    private const string damageableTag = "Damageable";
-
     [Header("Combat Fields")]
     [SerializeField] private CombatController combatController;
 
@@ -57,16 +54,6 @@ public class PlayerController : NetworkBehaviour
             if (Input.GetMouseButtonDown(0))
                 TryPrimaryAttack();
         }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        //will need to change this later as the hit interaction here isn't a great way to implement this, has bugs, and is temporary
-        //will probably have combatcontroller handle this functionality in the future.
-        if (!other.CompareTag(damageableTag) || !other.TryGetComponent(out AttributeComponent enemyAttributeComponent) || !combatController.IsAttacking)
-            return;
-
-        enemyAttributeComponent.TryApplyHealthChange(-damageToDeal);
     }
 
     #region Movement Functions

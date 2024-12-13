@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Enemy : NetworkBehaviour
 {
+    public AttributeComponent AttributeComponent { get => attributeComponent; }
     [SerializeField] private AttributeComponent attributeComponent;
+
     [SerializeField] private CombatController combatController;
 
     private bool inAttackRange = false;
@@ -14,7 +16,6 @@ public class Enemy : NetworkBehaviour
     [SerializeField] private float stoppingDistance = 2f;
     [SerializeField] private float rotationSpeed = 5f;
 
-    protected const string PlayerTag = "Player";
     protected PlayerController targetPlayer;
     protected List<PlayerController> targetPlayers = new List<PlayerController>();
     protected float distanceToPlayer = 0;
@@ -45,7 +46,7 @@ public class Enemy : NetworkBehaviour
     protected virtual void OnTriggerEnter(Collider other)
     {
         //add players to list
-        if (other.CompareTag(PlayerTag) && other.TryGetComponent(out PlayerController playerController))
+        if (other.CompareTag(TagManager.PlayerTag) && other.TryGetComponent(out PlayerController playerController))
             if (!targetPlayers.Contains(playerController))
                 targetPlayers.Add(playerController);
     }
@@ -53,7 +54,7 @@ public class Enemy : NetworkBehaviour
     protected virtual void OnTriggerExit(Collider other)
     {
         //remove players from list
-        if (other.CompareTag(PlayerTag) && other.TryGetComponent(out PlayerController playerController) && targetPlayers.Contains(playerController))
+        if (other.CompareTag(TagManager.PlayerTag) && other.TryGetComponent(out PlayerController playerController))
         {
             if (targetPlayers.Contains(playerController))
                 targetPlayers.Remove(playerController);

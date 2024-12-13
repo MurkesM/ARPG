@@ -13,12 +13,13 @@ GameObject:
   - component: {fileID: -203156112763874204}
   - component: {fileID: -3758874783044247149}
   - component: {fileID: 8761312718662116143}
+  - component: {fileID: 1065376392468245052}
   - component: {fileID: 1335888468898375229}
   - component: {fileID: 4301747858281388608}
-  - component: {fileID: 1065376392468245052}
+  - component: {fileID: 6512127076983573425}
   m_Layer: 0
   m_Name: Titan
-  m_TagString: Damageable
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,6 +115,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 100
   maxHealth: 100
+--- !u!114 &1065376392468245052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77776957332272983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d31233417b7f50419bdec8776b8906d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowedTargets: 0
+  damageToDeal: 10
+  rightHandColliderHandler: {fileID: 1054083004711802496}
 --- !u!136 &1335888468898375229
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -158,18 +174,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 5
   m_Center: {x: 0, y: 1.23, z: 0}
---- !u!114 &1065376392468245052
-MonoBehaviour:
+--- !u!54 &6512127076983573425
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 77776957332272983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d31233417b7f50419bdec8776b8906d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &353150972713484404
 GameObject:
   m_ObjectHideFlags: 0
@@ -1709,6 +1740,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2998387859462403015}
+  - component: {fileID: 9182769126690406333}
+  - component: {fileID: 1054083004711802496}
   m_Layer: 0
   m_Name: Wrist_R
   m_TagString: Untagged
@@ -1734,6 +1767,39 @@ Transform:
   - {fileID: 7132849715139382980}
   m_Father: {fileID: 4264414610141834742}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &9182769126690406333
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9002643928197592606}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: -0.31, y: 0.12, z: 0}
+--- !u!114 &1054083004711802496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9002643928197592606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62854ffb782e64e43bacf3ffde4f7f48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9217209172098498725
 GameObject:
   m_ObjectHideFlags: 0
