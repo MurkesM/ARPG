@@ -12,6 +12,8 @@ public class PlayerController : NetworkBehaviour
 
     [Header("Attribute Fields")]
     [SerializeField] private AttributeComponent attributeComponent;
+    public AttributeComponent AttributeComponent { get => attributeComponent; }
+
     [SerializeField] private int damageToDeal = 10;
     private const string damageableTag = "Damageable";
 

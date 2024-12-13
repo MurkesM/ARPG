@@ -46,7 +46,8 @@ public class Enemy : NetworkBehaviour
     {
         //add players to list
         if (other.CompareTag(PlayerTag) && other.TryGetComponent(out PlayerController playerController))
-            targetPlayers.Add(playerController);
+            if (!targetPlayers.Contains(playerController))
+                targetPlayers.Add(playerController);
     }
 
     protected virtual void OnTriggerExit(Collider other)
@@ -54,7 +55,8 @@ public class Enemy : NetworkBehaviour
         //remove players from list
         if (other.CompareTag(PlayerTag) && other.TryGetComponent(out PlayerController playerController) && targetPlayers.Contains(playerController))
         {
-            targetPlayers.Remove(playerController);
+            if (targetPlayers.Contains(playerController))
+                targetPlayers.Remove(playerController);
 
             if (isMoving)
                 StopMove();
