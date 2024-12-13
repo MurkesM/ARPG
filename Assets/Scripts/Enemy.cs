@@ -66,6 +66,10 @@ public class Enemy : NetworkBehaviour
         if (inAttackRange || combatController.IsAttacking || targetPlayers.Count < 1)
             return;
 
+        //make sure to start the animation for moving if we just started moving after not moving
+        if (!isMoving)
+            animator.SetBool(moveParam, true);
+
         transform.position = Vector3.MoveTowards(transform.position, targetPlayer.transform.position, moveSpeed * Time.deltaTime);
         isMoving = true;
 
@@ -102,7 +106,10 @@ public class Enemy : NetworkBehaviour
 
     private void CheckIfInAttackRange()
     {
-        inAttackRange = distanceToPlayer <= stoppingDistance;
+        if (targetPlayer)
+            inAttackRange = distanceToPlayer <= stoppingDistance;
+        else 
+            inAttackRange = false;
     }
 
     private void TryPrimaryAttack()
