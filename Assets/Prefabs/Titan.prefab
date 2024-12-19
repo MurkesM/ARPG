@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 8761312718662116143}
   - component: {fileID: 1065376392468245052}
   - component: {fileID: 1335888468898375229}
-  - component: {fileID: 4301747858281388608}
   - component: {fileID: 6512127076983573425}
   m_Layer: 0
   m_Name: Titan
@@ -75,11 +74,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a399cc7a7095bfd4ba12dbed507d7d3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attributeComponent: {fileID: 8761312718662116143}
-  combatController: {fileID: 1065376392468245052}
+  proximityColliderEventListener: {fileID: 8832194314773048869}
   moveSpeed: 2
   stoppingDistance: 2
   rotationSpeed: 5
+  attributeComponent: {fileID: 8761312718662116143}
+  combatController: {fileID: 1065376392468245052}
+  lineOfSightConeAngle: 20
+  lineOfSightMaxDistance: 30
   animator: {fileID: 5611975497586246047}
 --- !u!114 &-3758874783044247149
 MonoBehaviour:
@@ -153,27 +155,6 @@ CapsuleCollider:
   m_Height: 2.4812381
   m_Direction: 1
   m_Center: {x: -0.014690995, y: 1.2092537, z: 0}
---- !u!135 &4301747858281388608
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 77776957332272983}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 5
-  m_Center: {x: 0, y: 1.23, z: 0}
 --- !u!54 &6512127076983573425
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -946,6 +927,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6785448608564575276}
   - component: {fileID: 5500418178930744118}
+  - component: {fileID: 4860473617481322000}
+  - component: {fileID: 8832194314773048869}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -1061,6 +1044,39 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.07018089, y: 0.08886713, z: 0.00000011920929}
     m_Extent: {x: 1.4072869, y: 0.8981722, z: 2.1682487}
   m_DirtyAABB: 0
+--- !u!135 &4860473617481322000
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3282094842098006493}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 5
+  m_Center: {x: 0, y: 1.23, z: 0}
+--- !u!114 &8832194314773048869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3282094842098006493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62854ffb782e64e43bacf3ffde4f7f48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3443822651609371633
 GameObject:
   m_ObjectHideFlags: 0

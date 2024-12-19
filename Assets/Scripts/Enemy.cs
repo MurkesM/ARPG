@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : NetworkBehaviour
 {
     [Header("General Fields")]
+    [SerializeField] private ColliderEventHandler proximityColliderEventListener;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float stoppingDistance = 2f;
     [SerializeField] private float rotationSpeed = 5f;
@@ -15,12 +16,16 @@ public class Enemy : NetworkBehaviour
 
     [Header("Combat Fields")]
     [SerializeField] private CombatController combatController;
+    [SerializeField] private float lineOfSightConeAngle = 20f;
+    [SerializeField] private float lineOfSightMaxDistance = 30f;
     private bool inAttackRange = false;
+    private bool inLineOfSite = false;
 
     //player related fields
     protected PlayerController targetPlayer;
     protected List<PlayerController> targetPlayers = new List<PlayerController>();
-    protected float distanceToPlayer = 0;
+    protected float distanceToTarget = 0;
+    protected Vector3 directionOfTarget = Vector3.zero;
 
     [Header("Animation Fields")]
     [SerializeField] private Animator animator;
@@ -33,19 +38,21 @@ public class Enemy : NetworkBehaviour
 
         combatController.OnPrimaryAttackCalled += OnPrimaryAttackCalled;
         combatController.OnPrimaryAttackEnd += OnPrimaryAttackEnd;
+        proximityColliderEventListener.OnTriggerEntered += OnProximityZoneEnter;
+        proximityColliderEventListener.OnTriggerExited += OnProximityZoneExit;
     }
 
     private void Update()
     {
-        UpdateDistanceToPlayer();
+        UpdateTargetPlayerData();
         CheckIfInAttackRange();
-        MoveAndRotateTowardsTargetPlayer();
-
-        if (inAttackRange)
-            TryPrimaryAttack();
+        MoveTowardsTargetPlayer();
+        CheckLineOfSite();
+        RotateTowardsTargetPlayer();
+        TryPrimaryAttack();
     }
 
-    protected virtual void OnTriggerEnter(Collider other)
+    private void OnProximityZoneEnter(Collider other)
     {
         //add players to list
         if (other.CompareTag(TagManager.PlayerTag) && other.TryGetComponent(out PlayerController playerController))
@@ -53,20 +60,28 @@ public class Enemy : NetworkBehaviour
                 targetPlayers.Add(playerController);
     }
 
-    protected virtual void OnTriggerExit(Collider other)
+    private void OnProximityZoneExit(Collider other)
     {
         //remove players from list
         if (other.CompareTag(TagManager.PlayerTag) && other.TryGetComponent(out PlayerController playerController))
         {
+            print("test");
+
             if (targetPlayers.Contains(playerController))
                 targetPlayers.Remove(playerController);
 
-            if (isMoving)
-                StopMove();
+            if (targetPlayers.Count < 1)
+            {
+                targetPlayer = null;
+                inLineOfSite = false;
+
+                if (isMoving)
+                    StopMove();
+            }
         }
     }
 
-    protected virtual void MoveAndRotateTowardsTargetPlayer()
+    protected virtual void MoveTowardsTargetPlayer()
     {
         if (inAttackRange || combatController.IsAttacking || targetPlayers.Count < 1)
             return;
@@ -77,14 +92,16 @@ public class Enemy : NetworkBehaviour
 
         transform.position = Vector3.MoveTowards(transform.position, targetPlayer.transform.position, moveSpeed * Time.deltaTime);
         isMoving = true;
+    }
 
-        //rotate
-        Vector3 direction = targetPlayer.transform.position - transform.position;
-        direction.y = 0;
+    protected virtual void RotateTowardsTargetPlayer()
+    {
+        if (inLineOfSite || combatController.IsAttacking || targetPlayers.Count < 1)
+            return;
 
-        if (direction != Vector3.zero)
+        if (directionOfTarget != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            Quaternion targetRotation = Quaternion.LookRotation(directionOfTarget);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
@@ -98,7 +115,24 @@ public class Enemy : NetworkBehaviour
         animator.SetBool(moveParam, isMoving);
     }
 
-    private void UpdateDistanceToPlayer()
+    private void CheckLineOfSite()
+    {
+        if (!targetPlayer)
+            return;
+
+        float angle = Vector3.Angle(transform.forward, directionOfTarget);
+
+        if (angle <= lineOfSightConeAngle / 2 && directionOfTarget.magnitude <= lineOfSightMaxDistance)
+            if (Physics.Raycast(transform.position, directionOfTarget.normalized, out RaycastHit hit, lineOfSightMaxDistance) && hit.transform == targetPlayer.transform)
+            {
+                inLineOfSite = true;
+                return;
+            }
+                
+         inLineOfSite = false;
+    }
+
+    private void UpdateTargetPlayerData()
     {
         if (targetPlayers.Count < 1)
             return;
@@ -106,20 +140,25 @@ public class Enemy : NetworkBehaviour
         //always target the first player to get added to the list, which should be the first player to enter the range of this enemy
         targetPlayer = targetPlayers[0];
 
-        distanceToPlayer = Vector3.Distance(transform.position, targetPlayer.transform.position);
+        //update distance
+        distanceToTarget = Vector3.Distance(transform.position, targetPlayer.transform.position);
+
+        //update direction
+        directionOfTarget = targetPlayer.transform.position - transform.position;
+        directionOfTarget.y = 0;
     }
 
     private void CheckIfInAttackRange()
     {
         if (targetPlayer)
-            inAttackRange = distanceToPlayer <= stoppingDistance;
+            inAttackRange = distanceToTarget <= stoppingDistance;
         else 
             inAttackRange = false;
     }
 
     private void TryPrimaryAttack()
     {
-        if (combatController.IsAttacking)
+        if (!inAttackRange || !inLineOfSite || combatController.IsAttacking)
             return;
 
         StopMove();
@@ -143,5 +182,7 @@ public class Enemy : NetworkBehaviour
 
         combatController.OnPrimaryAttackCalled -= OnPrimaryAttackCalled;
         combatController.OnPrimaryAttackEnd -= OnPrimaryAttackEnd;
+        proximityColliderEventListener.OnTriggerEntered -= OnProximityZoneEnter;
+        proximityColliderEventListener.OnTriggerExited -= OnProximityZoneExit;
     }
 }
