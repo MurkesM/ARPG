@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : CharacterBehavior
 {
     [Header("Move/Rotate Fields")]
     [SerializeField] private float moveSpeed = 5f;
@@ -9,10 +9,6 @@ public class PlayerController : NetworkBehaviour
     private Vector3 targetPosition = new();
     private Vector3 targetDirection = new();
     private bool isMoving = false;
-
-    [Header("Attribute Fields")]
-    [SerializeField] private AttributeComponent attributeComponent;
-    public AttributeComponent AttributeComponent { get => attributeComponent; }
 
     [Header("Combat Fields")]
     [SerializeField] private CombatController combatController;
@@ -25,18 +21,20 @@ public class PlayerController : NetworkBehaviour
     [Header("Debug Fields")]
     [SerializeField] private MeshRenderer debugMarkerMeshRenderer;
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         combatController.OnPrimaryAttackCalled += OnPrimaryAttackCalled;
         combatController.OnPrimaryAttackEnd += OnPrimaryAttackEnd;
     }
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner)
-            return;
+        base.OnNetworkSpawn();
 
-        debugMarkerMeshRenderer.material.color = IsServer ? Color.green : Color.blue;
+        if (IsOwner)
+            debugMarkerMeshRenderer.material.color = IsServer ? Color.green : Color.blue;
     }
 
     private void Update()

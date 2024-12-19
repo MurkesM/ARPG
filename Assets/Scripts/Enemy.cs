@@ -1,18 +1,19 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Enemy : NetworkBehaviour
+public class Enemy : CharacterBehavior
 {
     [Header("General Fields")]
     [SerializeField] private ColliderEventHandler proximityColliderEventListener;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float stoppingDistance = 2f;
     [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private float timeToDestroyOnDeath = 5;
     private bool isMoving = false;
-
-    public AttributeComponent AttributeComponent { get => attributeComponent; }
-    [SerializeField] private AttributeComponent attributeComponent;
 
     [Header("Combat Fields")]
     [SerializeField] private CombatController combatController;
@@ -31,11 +32,13 @@ public class Enemy : NetworkBehaviour
     [SerializeField] private Animator animator;
     private const string moveParam = "IsMoving";
     private const string primaryAttackParam = "IsPrimaryAttacking";
+    private const string isAliveParam = "IsAlive";
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
+        attributeComponent.OnKilled += OnKilled;
         combatController.OnPrimaryAttackCalled += OnPrimaryAttackCalled;
         combatController.OnPrimaryAttackEnd += OnPrimaryAttackEnd;
         proximityColliderEventListener.OnTriggerEntered += OnProximityZoneEnter;
@@ -44,6 +47,9 @@ public class Enemy : NetworkBehaviour
 
     private void Update()
     {
+        if (!attributeComponent.IsAlive)
+            return;
+
         UpdateTargetPlayerData();
         CheckIfInAttackRange();
         MoveTowardsTargetPlayer();
@@ -176,10 +182,30 @@ public class Enemy : NetworkBehaviour
         //keeping here for future
     }
 
+    private void OnKilled()
+    {
+        //probably want to cache these at some point but for now things might change so much as we are making the app that can simplify the code for sake of prototyping
+        Collider[] colliders = GetComponentsInChildren<Collider>().ToArray();
+
+        foreach (Collider collider in colliders)
+            collider.enabled = false;
+
+        animator.SetBool(isAliveParam, false);
+
+        StartCoroutine(DeathRoutine());
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        yield return new WaitForSeconds(timeToDestroyOnDeath);
+        Destroy(gameObject);
+    }
+
     public override void OnDestroy()
     {
         base.OnDestroy();
 
+        attributeComponent.OnKilled -= OnKilled;
         combatController.OnPrimaryAttackCalled -= OnPrimaryAttackCalled;
         combatController.OnPrimaryAttackEnd -= OnPrimaryAttackEnd;
         proximityColliderEventListener.OnTriggerEntered -= OnProximityZoneEnter;
